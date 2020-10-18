@@ -1,8 +1,7 @@
 from flask import request
 import json
 
-from controller import getUsers as getUsersController
-from controller import insertUser as insertUserController
+from controller import user as userController
 
 class Routes:
 	def __init__(self, app):
@@ -10,9 +9,9 @@ class Routes:
 
 		@app.route('/', methods=['GET'])
 		def getUsers():
-			return getUsersController()
+			return userController.getAll()
 
 		@app.route('/user', methods=['POST'])
 		def insertUser():
 			data = json.loads(request.data)
-			return insertUserController(data)
+			return userController.insert(data)
