@@ -1,5 +1,4 @@
 from model.user import User
-from bson.json_util import dumps
 
 """
 
@@ -28,4 +27,4 @@ def insert(new_user, database):
 		return database.insertOneUnique("users", user.__dict__, {"email"})
 
 def getAll(database):
-	return dumps({"users": database.getAllDocsCursor("users")})
+	return {"users": database.getAllDocs("users")}
