@@ -15,7 +15,7 @@ insertOne() - receives a collection name as string, and a document as dict.
 insertOneUnique() - receives a collection name as string, and a document as dict.
 				  - checks if there is an identical document in the collection before inserting.
 				  - returns a status string.
-				  - optionally, it receives a set with strings as the 4th argument:
+				  - optionally, it receives a set with strings as the 3th argument:
 				  	- this set is meant to filter for identical documents in a more specific case. 
 				  	- only the columns described in the set will be considered as unique.
 				  	- the function then will check if there is a document in the collection with 
@@ -56,7 +56,7 @@ class Mongo():
 		
 	def insertOneUnique(self, collection_name, document, unique_columns=False):
 		all_docs = self.getAllDocs(collection_name)
-		if isinstance(unique_columns, set):	
+		if unique_columns:	
 			if all_docs:
 				all_filtered_for_unique_columns = []
 				for doc in all_docs:
@@ -72,7 +72,7 @@ class Mongo():
 			else:
 				result = self.insertOne(collection_name, document)
 				return result
-		elif dumps(document) in all_docs:
+		elif document in all_docs:
 			print("\nDocument already exists in the collection.")
 			return "Document already exists in the collection."
 		else:
