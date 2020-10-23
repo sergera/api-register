@@ -54,13 +54,11 @@ class Mongo():
 		except Exception as e:
 			print("\nCould not insert in database: ",e)
 		
-	def insertOneUnique(self, collection_name, document, unique_columns=False):
+	def insertOneUnique(self, collection_name, document, unique_columns=None):
 		all_docs = self.getAllDocs(collection_name)
-		if unique_columns:	
+		if unique_columns:
 			if all_docs:
-				all_filtered_for_unique_columns = []
-				for doc in all_docs:
-					all_filtered_for_unique_columns.append({key: doc[key] for key in doc.keys() and unique_columns})
+				all_filtered_for_unique_columns = [{key: doc[key] for key in doc.keys() and unique_columns} for doc in all_docs]
 				doc_filtered_for_unique_columns = {key: document[key] for key in document.keys() and unique_columns}
 
 				if doc_filtered_for_unique_columns in all_filtered_for_unique_columns:
