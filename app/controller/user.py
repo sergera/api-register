@@ -1,4 +1,9 @@
+from flask import Blueprint, request
+
 from app.model.user import User
+from app.repository import repository
+
+app_user = Blueprint('app_user', __name__)
 
 """
 
@@ -7,25 +12,20 @@ The controller
 On Insert:
 1- creates the model, 
 2- validates the input, 
-3- and passes the model to the data layer.
+3- and passes the model to the repository layer.
 
 On Get:
-1- passes the collection name to the data layer.
+1- passes the collection name to the repository layer.
 
 """
+@app_user.route('/user', methods=['POST'])
+def insert():
+    new_user = request.json
+    user = User(new_user)
+    user.validate()
+    repository.insert_one_key("users", user.to_dict(), {"unique_keys": {"email"}})
+    return {"message": "success"}
 
-def insert(new_user, database):
-	user = User(new_user)
-	valid_email = user.validateEmail()
-	valid_name = user.validateName()
-		
-	if not valid_email:
-		return "Invalid email!"
-	elif not valid_name:
-		return "Invalid name!"
-	else:
-		user_dict = user.__dict__
-		return database.insertOneKey("users", user_dict, {"unique_keys": {"email"}})
-
-def getAll(database):
-	return {"users": database.getAllDocs("users")}
+@app_user.route('/users', methods=['GET'])
+def get_all():
+    return {"users": repository.get_all_docs("users")}
