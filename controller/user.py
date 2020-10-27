@@ -24,7 +24,8 @@ def insert(new_user, database):
 	elif not valid_name:
 		return "Invalid name!"
 	else:
-		return database.insertOneUnique("users", user.__dict__, {"email"})
+		user_dict = user.__dict__
+		return database.insertOneKey("users", user_dict, {"unique_keys": {"email"}})
 
 def getAll(database):
 	return {"users": database.getAllDocs("users")}

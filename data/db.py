@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import json
 
 """
 
@@ -12,15 +13,20 @@ getAllDocs() - receives collection name as string.
 insertOne() - receives a collection name as string, and a document as dict.
 			- returns a status string.
 
-insertOneUnique() - receives a collection name as string, and a document as dict.
-				  - checks if there is an identical document in the collection before inserting.
-				  - returns a status string.
-				  - optionally, it receives a set with strings as the 3th argument:
-				  	- this set is meant to filter for identical documents in a more specific case. 
-				  	- only the columns described in the set will be considered as unique.
-				  	- the function then will check if there is a document in the collection with 
-				  	these columns identical before inserting.
-				  	- returns a status string.
+insertOneKey() 
+- receives a collection name as string, a document as dict, and an optional "rules" dict as a 3rd argument.
+- the "rules" dict can have a "unique_keys" property, and/or a "compound_key" property.
+- both properties can only have their values as a set.
+- the set must have keys from the document (to be inserted) as strings.
+- if there is a "rules" dict (3rd argument):
+	-> the function will consider all of the fields in the "compound_key" set as a compound key.
+	-> it will only insert the document if there is no other document with an identical compound key.
+	-> the function will consider all of the fields in the "unique_keys" set as unique keys.
+	-> it will only insert the document if there is no other document with any of the fields listed with identical values.
+- if there is no "rules" dict (3rd argument):
+    -> the function will consider all of the fields of the document as a compound key
+    -> it will insert the document in the collection if there are no other documents identical to it.
+
 """
 
 class Mongo():
@@ -54,25 +60,34 @@ class Mongo():
 		except Exception as e:
 			print("\nCould not insert in database: ",e)
 		
-	def insertOneUnique(self, collection_name, document, unique_columns=None):
-		all_docs = self.getAllDocs(collection_name)
-		if unique_columns:
-			if all_docs:
-				all_filtered_for_unique_columns = [{key: doc[key] for key in doc.keys() and unique_columns} for doc in all_docs]
-				doc_filtered_for_unique_columns = {key: document[key] for key in document.keys() and unique_columns}
+	def insertOneKey(self, collection_name, document, rules):
+		if rules:
+			document_already_exists = None
+			if "compound_key" in rules:
+				key_dict = { key: document[key] for key in rules["compound_key"] }
+				cursor = self.db[collection_name].find(key_dict, {'_id': False})
+				document_list = list(cursor)
+				if document_list:
+					document_already_exists = True
 
-				if doc_filtered_for_unique_columns in all_filtered_for_unique_columns:
-					print("\nDocument already exists in the collection.")
-					return "Document already exists in the collection."
-				else:
-					result = self.insertOne(collection_name, document)
-					return result			
+			if "unique_keys" in rules:
+				key_list = [ { key: document[key] } for key in rules["unique_keys"] ]
+				for key in key_list:
+					cursor = self.db[collection_name].find(key, {'_id': False})
+					document_list = list(cursor)
+					if document_list:
+						document_already_exists = True
+						
+			if document_already_exists:
+				return {"message": "there is already a document in the dataBase"}
 			else:
 				result = self.insertOne(collection_name, document)
 				return result
-		elif document in all_docs:
-			print("\nDocument already exists in the collection.")
-			return "Document already exists in the collection."
 		else:
-			result = self.insertOne(collection_name, document)
-			return result
+			cursor = self.db[collection_name].find(document, {'_id': False})
+			document_list = list(cursor)
+			if document_list:
+				return {"message": "there is already a document in the dataBase"}
+			else:
+				result = self.insertOne(collection_name, document)
+				return result
