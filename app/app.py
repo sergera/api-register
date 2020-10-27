@@ -1,6 +1,6 @@
 from flask import Flask, request
-from controller import user as user_controller
-from data import db
+from .controller import user as user_controller
+from .data import db
 
 app = Flask(__name__)
 
