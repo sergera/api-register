@@ -5,35 +5,23 @@ from .exceptions import ExistingDocumentException
 from .exceptions import CouldNotInsertDocumentException
 from .exceptions import CouldNotGetDocumentsException
 
-"""
-
-Mongo Class
-
-Receives an adress to the database and a database name on instantiation.
-
-get_all_docs() - receives collection name as string.
-             - returns a list of documents, with the internal MongoDB _id absent.
-
-insert_one() - receives a collection name as string, and a document as dict.
-            - returns a status string.
-
-insert_one_key() 
-- receives a collection name as string, a document as dict, and an optional "rules" dict as a 3rd argument.
-- the "rules" dict can have a "unique_keys" property, and/or a "compound_key" property.
-- both properties can only have their values as a set.
-- the set must have keys from the document (to be inserted) as strings.
-- if there is a "rules" dict (3rd argument):
-    -> the function will consider all of the fields in the "compound_key" set as a compound key.
-    -> it will only insert the document if there is no other document with an identical compound key.
-    -> the function will consider all of the fields in the "unique_keys" set as unique keys.
-    -> it will only insert the document if there is no other document with any of the fields listed with identical values.
-- if there is no "rules" dict (3rd argument):
-    -> the function will consider all of the fields of the document as a compound key
-    -> it will insert the document in the collection if there are no other documents identical to it.
-
-"""
-
 class Mongo():
+    """
+    A class used to represent the MongoDB database.
+    It uses pymongo, and simplifies some of it's basic functionality.
+
+    Args:
+        db_address (str):
+            MongoDB's address.
+        db_name (str):
+            the name of the database in this particular instance of MongoDB.        
+
+    Attributes:
+        db_address (str):
+            MongoDB's address.
+        db_name (str):
+            the name of the database in this particular instance of MongoDB.
+    """
     def __init__(self, db_address, db_name):
         self.db_address = db_address
         self.db_name = db_name
@@ -45,6 +33,19 @@ class Mongo():
         self.db = client[self.db_name]
 
     def get_all_docs(self, collection_name):
+        """Gets all documents in a collection
+
+        Args:
+            collection_name (str):
+                The name of the collection
+
+        Returns:
+            list: documents in collection   
+
+        Raises:
+            CouldNotGetDocumentsException
+                If it fails to retrieve documents
+        """
         try:
             cursor = self.db[collection_name].find({}, {'_id': False})
             return list(cursor)
@@ -52,13 +53,51 @@ class Mongo():
             raise CouldNotGetDocumentsException("Could not get all documents!")
 
     def insert_one(self, collection_name, document):
+        """Inserts one document in a collection
+
+        Args:
+            collection_name (str):
+                The name of the collection
+            document (dict):
+                Document to be inserted
+
+        Returns:
+            dict: a status message
+
+        Raises:
+            CouldNotInsertDocumentException
+                If it fails to insert the document
+        """
         try:
             result = self.db[collection_name].insert_one(document)
             return {"message": "Document Inserted!"}
         except:
-            raise CouldNotGetDocumentsException("Could not insert in database!")
+            raise CouldNotInsertDocumentException("Could not insert in database!")
         
-    def insert_one_key(self, collection_name, document, rules):
+    def insert_one_key(self, collection_name, document, rules=None):
+        """Inserts one document in a collection, with rules for which fields are keys
+
+        If no rules are passed, the whole document will be considered a key, and will 
+        only be inserted if it's completely unique
+
+        If the rules dict has a "compound_key" set, listed field names will be 
+        considered a compound key
+        
+        If the rules dict has a "unique_keys" set, listed field names will each be 
+        considered a key
+
+        Args:
+            collection_name (str):
+                The name of the collection
+            document (dict) :
+                Document to be inserted
+            rules (dict of sets, optional):
+                Key rules
+                
+        Raises:
+            ExistingDocumentException
+                In case the defined keys are not unique in the collection
+        """
         if rules:
             if "compound_key" in rules:
                 #check if compound key is unique in the collection

@@ -5,21 +5,11 @@ from app.repository import repository
 
 app_user = Blueprint('app_user', __name__)
 
-"""
-
-The controller
-
-On Insert:
-1- creates the model, 
-2- validates the input, 
-3- and passes the model to the repository layer.
-
-On Get:
-1- passes the collection name to the repository layer.
-
-"""
 @app_user.route('/user', methods=['POST'])
 def insert():
+	"""
+	Validates and inserts user
+	"""
     new_user = request.json
     user = User(new_user)
     user.validate()
@@ -28,4 +18,7 @@ def insert():
 
 @app_user.route('/users', methods=['GET'])
 def get_all():
+	"""
+	Gets all users in a collection
+	"""
     return {"users": repository.get_all_docs("users")}
