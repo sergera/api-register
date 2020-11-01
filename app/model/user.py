@@ -8,7 +8,7 @@ NAME_REGEX = re.compile("^[a-zA-Z]+(\\ ?[a-zA-Z]+)+$")
 
 class User():
     """
-    A class used to represent a user model.
+    A class used to represent a user model
 
     Args:
         user (dict):
@@ -18,7 +18,7 @@ class User():
         email (str):
             MongoDB's address
         name (str):
-            the name of the database in this particular instance of MongoDB
+            Name of the database in this particular instance of MongoDB
     """
     def __init__(self, user):
         self.email = user["email"]

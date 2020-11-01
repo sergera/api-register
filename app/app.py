@@ -1,6 +1,5 @@
 from flask import Flask
 
-from .controller import user as user_controller
 from .controller.user import app_user
 from .view.exception_handler import app_error_handler
 
