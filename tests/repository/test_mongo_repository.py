@@ -257,19 +257,17 @@ class RepositoryTestCase(unittest.TestCase):
     def test_drop_database_success(self):
         returned_message = {"message": "Database Droped!"}
 
-        self.mocked_mongo.drop_database.return_value = {"message": "success"}
+        self.mocked_mongo().drop_database.return_value = {"message": "success"}
 
         result = self.mongo.drop_database(DB_NAME)
 
-        # self.mongo.drop_database.assert_called_once_with(DB_NAME)
-
         self.assertEqual(returned_message, result)
 
-    # def test_drop_database_failure(self):
-    #     self.mocked_mongo.drop_database.side_effect = Exception("oops")
+    def test_drop_database_failure(self):
+        self.mocked_mongo().drop_database.side_effect = Exception("oops")
 
-    #     with self.assertRaises(CouldNotDropDatabaseException): 
-    #         result = self.mongo.drop_database(DB_NAME)
+        with self.assertRaises(CouldNotDropDatabaseException): 
+            result = self.mongo.drop_database(DB_NAME)
 
     def test_drop_collection_success(self):
         returned_message = {"message": "Collection Droped!"}

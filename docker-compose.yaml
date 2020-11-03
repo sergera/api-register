@@ -2,9 +2,9 @@ version: '3'
 services:
   app:
     build:
-      context: .
+      context:
       dockerfile: Dockerfile
-    container_name: web_app
+    container_name: app_api_register
     image: api_register_image
     restart: unless-stopped
     environment:
@@ -21,7 +21,7 @@ services:
 
   mongodb:
     image: mongo:4.0.8
-    container_name: mongodb
+    container_name: mongodb_api_register
     restart: unless-stopped
     command: mongod
     # volumes:

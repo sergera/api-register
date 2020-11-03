@@ -23,14 +23,6 @@ def get_all():
     """
     return {"users": repository.get_all_docs("users")}
 
-@app_user.route('/users/delete', methods=['POST'])
-def delete():
-    """
-    Deletes users with the key in a collection
-    """
-    key = request.json
-    return repository.delete_many("users", key)
-
 @app_user.route('/', methods=['GET'])
 def root():
     """
