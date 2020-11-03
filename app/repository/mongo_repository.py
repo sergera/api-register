@@ -1,7 +1,6 @@
 import json
 
 from pymongo import MongoClient
-import mongomock
 
 from .exceptions import (CouldNotDeleteDocumentException,
                          CouldNotDeleteDocumentsException,
@@ -29,19 +28,12 @@ class MongoRepository():
         db_name (str):
             the name of the database in this particular instance of MongoDB
     """
-    def __init__(self, db_address, db_name, test=None):
+    def __init__(self, db_address, db_name):
         self.db_address = db_address
         self.db_name = db_name
         self._db = None
         self._client = None
-        if test:
-            self.mock_connect()
-        else:            
-            self.connect()
-
-    def mock_connect(self):
-        self._client = mongomock.MongoClient()
-        self._db = self._client.db
+        self.connect()
 
     def connect(self):
         self._client = MongoClient(self.db_address)

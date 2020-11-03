@@ -1,13 +1,13 @@
 FROM python:3.8-slim-buster
 
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+RUN mkdir /app
+WORKDIR app
 
 # Install dependencies:
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Run the application:
-COPY myapp.py .
-CMD ["python", "myapp.py"]
+COPY . .
+
+ENTRYPOINT gunicorn -b 0.0.0.0:$PORT app.app:app --workers $WORKERS

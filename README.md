@@ -1,5 +1,9 @@
 A simple API that registers a user with a valid e-mail address on MongoDB.
 
+Dependencies OS:
+docker
+docker-compose
+
 Sergera
 Desafio API Simples
 Considerações Gerais

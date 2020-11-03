@@ -16,8 +16,11 @@ setup: ## Install dependencies
 	pip install -r requirements.txt
 	pip install -r requirements.dev.txt
 
-run: ## Run the server in development mode
+run-dev: ## Run the server in development mode
 	FLASK_APP=app.app:app flask run
+
+run-prod:
+	docker-compose up
 
 test:
 	pytest tests --cov-report term --cov=app
@@ -25,3 +28,9 @@ test:
 coverage: ## Opens html test coverage report in standard browser
 	pytest tests --cov-report term --cov=app --cov-report html
 	$(OPEN) htmlcov/index.html
+
+build:
+	docker-compose build
+
+clean:
+	docker-compose kill

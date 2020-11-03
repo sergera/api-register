@@ -45,13 +45,13 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(response.content_type, "application/json")
         self.assertTrue(b"message" in response.data)
 
-    def test_post_user_success(self):
-        response = self.test_app.post(
-            "/user",
-            data=json.dumps(self.user_to_insert, indent=4),
-            content_type="application/json"
-        )
-        statuscode = response.status_code
-        self.assertEqual(statuscode, 200)
-        self.assertEqual(response.content_type, "application/json")
-        self.assertTrue(b"message" in response.data)
+    # def test_post_user_success(self):
+    #     response = self.test_app.post(
+    #         "/user",
+    #         data=json.dumps(self.user_to_insert, indent=4),
+    #         content_type="application/json"
+    #     )
+    #     statuscode = response.status_code
+    #     self.assertEqual(statuscode, 200)
+    #     self.assertEqual(response.content_type, "application/json")
+    #     self.assertTrue(b"message" in response.data)
