@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 
-from app.model.exceptions import ValidationException
+from app.models.exceptions import ValidationException
 from app.repository.exceptions import (CouldNotGetDocumentException,
                                        CouldNotGetDocumentsException,
                                        CouldNotInsertDocumentException,

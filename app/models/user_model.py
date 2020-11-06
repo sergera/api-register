@@ -6,7 +6,7 @@ EMAIL_REGEX = re.compile("^(([a-zA-Z]|[0-9])+(-|_|\\.)?)+@[a-zA-Z]+(\\.[a-zA-Z]+
 
 NAME_REGEX = re.compile("^[a-zA-Z]+(\\ ?[a-zA-Z]+)+$")
 
-class User():
+class UserModel():
     """
     A class used to represent a user model
 
