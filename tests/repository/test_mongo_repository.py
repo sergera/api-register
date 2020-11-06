@@ -115,15 +115,16 @@ class RepositoryTestCase(unittest.TestCase):
 
     def test_insert_user_compound_key_failure(self):
         document = {"email": "correct@email.com", "name": "correct name"}
+        rules = { "compound_key": {"email", "name"} }
 
         self.mocked_collection.find_one.return_value = document
 
         with self.assertRaises(ExistingDocumentException):
-            self.mongo.insert_one_key(TEST_COLLECTION_NAME, document)
+            self.mongo.insert_one_key(TEST_COLLECTION_NAME, document, rules)
 
     def test_insert_user_unique_keys_success(self):
         document = {"email": "correct@email.com", "name": "correct name"}
-        rules = { "compound_key": {"email", "name"} }
+        rules = { "unique_keys": {"email", "name"} }
         returned_message = {"message": "Document Inserted!"}
 
         self.mocked_collection.find_one.return_value = None
@@ -132,14 +133,15 @@ class RepositoryTestCase(unittest.TestCase):
         response = self.mongo.insert_one_key(TEST_COLLECTION_NAME, document, rules)
 
         self.mocked_db.__getitem__.assert_called_with(TEST_COLLECTION_NAME)
-        self.assertEqual(self.mocked_db.__getitem__.call_count, 2)
+        self.assertEqual(self.mocked_db.__getitem__.call_count, 3)
         self.mocked_collection.insert_one.assert_called_once_with(document)
         self.assertEqual(returned_message, response)
 
     def test_insert_user_unique_keys_failure(self):
         document = {"email": "correct@email.com", "name": "correct name"}
+        rules = { "unique_keys": {"email", "name"} }
 
         self.mocked_collection.find_one.return_value = document
 
         with self.assertRaises(ExistingDocumentException):
-            self.mongo.insert_one_key(TEST_COLLECTION_NAME, document)
+            self.mongo.insert_one_key(TEST_COLLECTION_NAME, document, rules)
