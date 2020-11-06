@@ -20,7 +20,9 @@ DB_NAME = os.environ.get("DB_NAME")
 TEST_COLLECTION_NAME = "test"
 
 class RepositoryTestCase(unittest.TestCase):
-    
+    """
+    Tests repository interface with mocked pymongo
+    """
     def setUp(self):
         #mock interface client
         self.mocked_mongo = MagicMock()

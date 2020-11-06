@@ -6,7 +6,7 @@ from app import app
 class IndexTestCase(unittest.TestCase):
     """A test of the basic index route response
 
-    Testing if the welcome route is responding 200, application/json, 
+    Tests if the welcome route is responding 200, application/json, 
     and has data in response
     """
     def setUp(self):

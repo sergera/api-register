@@ -13,7 +13,7 @@ from app import app
 
 class UserControllerTestCase(unittest.TestCase):
     """
-
+    Tests user controller with mocked repository
     """
     def setUp(self):
         #create test client
