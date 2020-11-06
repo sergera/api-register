@@ -2,14 +2,9 @@ import json
 
 from pymongo import MongoClient
 
-from .exceptions import (CouldNotDeleteDocumentException,
-                         CouldNotDeleteDocumentsException,
-                         CouldNotGetDocumentException,
-                         CouldNotGetDocumentsException,
+from .exceptions import (CouldNotGetDocumentsException,
                          CouldNotInsertDocumentException,
-                         ExistingDocumentException,
-                         CouldNotDropCollectionException,
-                         CouldNotDropDatabaseException,)
+                         ExistingDocumentException,)
 
 class MongoRepository():
     """
@@ -38,52 +33,6 @@ class MongoRepository():
     def connect(self):
         self._client = MongoClient(self.db_address)
         self._db = self._client[self.db_name]
-
-    def get_doc(self, collection_name, key):
-        """Gets one document in a collection
-
-        Args:
-            collection_name (str):
-                The name of the collection
-            key (dict):
-                one document with those keys assigned to those values will be fetched
-
-        Returns:
-            dict: Document   
-
-        Raises:
-            CouldNotGetDocumentException
-                If it fails to retrieve the document
-        """
-        try:
-            document = self._db[collection_name].find_one(key, {'_id': False})
-            return document
-
-        except:
-            raise CouldNotGetDocumentException("Could not get document!")
-
-    def get_docs(self, collection_name, key):
-        """Gets documents in a collection with the specified key
-
-        Args:
-            collection_name (str):
-                The name of the collection
-            key (dict):
-                Every document with those keys assigned to those values will be fetched
-
-        Returns:
-            list: Documents   
-
-        Raises:
-            CouldNotGetDocumentsException
-                If it fails to retrieve documents
-        """
-        try:
-            cursor = self._db[collection_name].find(key, {'_id': False})
-            return list(cursor)
-
-        except:
-            raise CouldNotGetDocumentsException("Could not get documents!")
 
     def get_all_docs(self, collection_name):
         """Gets all documents in a collection
@@ -189,76 +138,3 @@ class MongoRepository():
             else:
                 message = self.insert_one(collection_name, document)
                 return message
-
-    def delete_one(self, collection_name, key):
-        """Deletes one document
-
-        Args:
-            collection_name (str):
-                Name of the collection
-            key (dict):
-                One document with those keys assigned to those values will be deleted
-        """
-        try:
-            self._db[collection_name].delete_one(key)
-            return {"message": "Document Deleted!"}
-
-        except:
-            raise CouldNotDeleteDocumentException('Could not delete document!')
-
-
-    def delete_many(self, collection_name, key):
-        """Deletes documents based on the specified key
-
-        Args:
-            collection_name (str):
-                Name of the collection
-            key (dict):
-                Every document with those keys assigned to those values will be deleted
-        """
-        try:
-            self._db[collection_name].delete_many(key)
-            return {"message": "Documents Deleted!"}
-
-        except:
-            raise CouldNotDeleteDocumentsException('Could not delete documents!')
-
-    def delete_all(self, collection_name):
-        """Deletes all documents in a colletion
-
-        Args:
-            collection_name (str):
-                Name of the collection
-        """
-        try:
-            self._db[collection_name].delete_many({})
-            return {"message": "All Documents Deleted!"}
-
-        except:
-            raise CouldNotDeleteDocumentsException('Could not delete all documents!')
-
-    def drop_collection(self, collection_name):
-        """
-        Args:
-            collection_name (str):
-                The name of the collection
-        """
-        try:
-            self._db.drop_collection(collection_name)
-            return {"message": "Collection Droped!"}
-
-        except:
-            raise CouldNotDropCollectionException('Could not drop collection!')
-
-    def drop_database(self, db_name):
-        """
-        Args:
-            db_name (str):
-                The name of the database
-        """
-        try:
-            self._client.drop_database(db_name)
-            return {"message": "Database Droped!"}
-
-        except:
-            raise CouldNotDropDatabaseException('Could not drop database!')
