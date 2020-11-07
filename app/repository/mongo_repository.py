@@ -77,64 +77,28 @@ class MongoRepository():
 
         except:
             raise CouldNotInsertDocumentException("Could not insert document!")
-        
-    def insert_one_key(self, collection_name, document, rules=None):
-        """Inserts one document in a collection, with rules for which fields are keys
 
-        If no rules are passed, the whole document will be considered a key, and will 
-        only be inserted if it's completely unique
-
-        If the rules dict has a "compound_key" set, listed field names will be 
-        considered a compound key
-        
-        If the rules dict has a "unique_keys" set, listed field names will each be 
-        considered a key
+    def insert_one_unique_fields(self, collection_name, document, field_sets):
+        """Inserts a document with unique fields in a collection
 
         Args:
             collection_name (str):
                 Name of the collection
             document (dict):
                 Document to be inserted
-            rules (dict, optional):
-                Key rules
-                
+            field_sets (list[set]):
+                If there are no documents in the collection with any of the field_sets,
+                the document will be inserted
+
         Raises:
             ExistingDocumentException
                 In case the defined keys are not unique in the collection
         """
-        if rules:
-
-            if "compound_key" in rules:
-                #check if compound key is unique in the collection
-
-                key_dict = { key: document[key] for key in rules["compound_key"] }
-                found_document = self._db[collection_name].find_one(key_dict, {'_id': False})
-
-                if found_document:
-                    raise ExistingDocumentException("Compound key already exists in collection!")
-
-            if "unique_keys" in rules:
-                #check if all unique keys are individually unique in the collection
-
-                key_list = [ { key: document[key] } for key in rules["unique_keys"] ]
-
-                for key in key_list:
-                    found_document = self._db[collection_name].find_one(key, {'_id': False})
-
-                    if found_document:
-                        raise ExistingDocumentException("Unique keys already exist in collection!")
-
-            message = self.insert_one(collection_name, document)
-            return message
-
-        else:
-            #insert document only if all fields are unique
-
-            found_document = self._db[collection_name].find_one(document, {'_id': False})
-
+        for field_set in field_sets:
+            unique_fields = { field: document[field] for field in field_set }
+            found_document = self._db[collection_name].find_one(unique_fields, {"_id": False})
             if found_document:
-                raise ExistingDocumentException("Identical already document exists in collection!")
+                raise ExistingDocumentException("Key already exists in collection!")
 
-            else:
-                message = self.insert_one(collection_name, document)
-                return message
+        message = self.insert_one(collection_name, document)
+        return message

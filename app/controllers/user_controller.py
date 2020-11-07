@@ -13,7 +13,8 @@ def insert():
     new_user = request.json 
     user = UserModel(new_user)
     user.validate()
-    repository.insert_one_key("users", user.to_dict(), {"unique_keys": {"email"}})
+    unique_fields = [{"email"}]
+    repository.insert_one_unique_fields("users", user.to_dict(), unique_fields)
     return {"message": "success!"}
 
 @app_user.route('/users', methods=['GET'])
@@ -28,4 +29,8 @@ def root():
     """
     Returns a welcome message
     """
-    return {"message": "Welcome to the user registering API! \nUse get('/users') to get all users, and post('/user') to insert a user!"}
+    return {
+        "message": 
+            """Welcome to the user registering API! \n
+            Use get('/users') to get all users, and post('/user') to insert a user!"""
+    }
