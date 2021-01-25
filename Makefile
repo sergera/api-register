@@ -19,18 +19,18 @@ setup: ## Install dependencies
 run-dev: ## Run the server in development mode
 	FLASK_APP=app.app:app flask run
 
-run-prod:
+run: ## Run the server in production mode with docker
 	docker-compose up
 
-test:
+test: ## Test application and provide coverage
 	pytest tests --cov-report term --cov=app
 
 coverage: ## Opens html test coverage report in standard browser
 	pytest tests --cov-report term --cov=app --cov-report html
 	$(OPEN) htmlcov/index.html
 
-build:
+build: ## Builds docker image
 	docker-compose build
 
-clean:
+clean: ## Kills docker image
 	docker-compose kill
