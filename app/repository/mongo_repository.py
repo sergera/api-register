@@ -98,7 +98,7 @@ class MongoRepository():
             unique_fields = { field: document[field] for field in field_set }
             found_document = self._db[collection_name].find_one(unique_fields, {"_id": False})
             if found_document:
-                raise ExistingDocumentException("Key already exists in collection!")
+                raise ExistingDocumentException("Unique fields already exist in collection!")
 
         message = self.insert_one(collection_name, document)
         return message

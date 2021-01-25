@@ -5,6 +5,8 @@ from app.repository import repository
 
 app_user = Blueprint('app_user', __name__)
 
+COLLECTION_NAME = "users"
+
 @app_user.route('/user', methods=['POST'])
 def insert():
     """
@@ -14,7 +16,7 @@ def insert():
     user = UserModel(new_user)
     user.validate()
     unique_fields = [{"email"}]
-    repository.insert_one_unique_fields("users", user.to_dict(), unique_fields)
+    repository.insert_one_unique_fields(COLLECTION_NAME, user.to_dict(), unique_fields)
     return {"message": "success!"}
 
 @app_user.route('/users', methods=['GET'])
@@ -22,7 +24,7 @@ def get_all():
     """
     Gets all users in a collection
     """
-    return {"users": repository.get_all_docs("users")}
+    return {"users": repository.get_all_docs(COLLECTION_NAME)}
 
 @app_user.route('/', methods=['GET'])
 def root():

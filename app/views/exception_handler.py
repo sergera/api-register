@@ -22,7 +22,3 @@ def handle_error_insert_document(ex):
 @app_error_handler.app_errorhandler(ExistingDocumentException)
 def handle_error_existing_document(ex):
 	return jsonify({"message": str(ex)}), 409
-
-# @app_error_handler.app_errorhandler(Exception)
-# def handle_error_generic(ex):
-# 	return jsonify({"message": str(ex)}), 500
