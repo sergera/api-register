@@ -20,6 +20,16 @@ class UserModelTestCase(unittest.TestCase):
         user_dict = new_user.to_dict()
         self.assertTrue(user_dict["email"] == correct["email"] and user_dict["name"] == correct["name"])
 
+    def test_missing_email(self):
+        missing_email = {"name": "correct name"}
+        with self.assertRaises(ValidationException):
+            new_user = UserModel(missing_email)
+
+    def test_missing_name(self):
+        missing_name = {"email": "correct@email.com"}
+        with self.assertRaises(ValidationException):
+            new_user = UserModel(missing_name)
+
     def test_name_space_before(self):
         space_before_name = {"email": "correct@email.com", "name": " incorrect name"}
         new_user = UserModel(space_before_name)

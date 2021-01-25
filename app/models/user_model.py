@@ -21,8 +21,11 @@ class UserModel():
             Name of the database in this particular instance of MongoDB
     """
     def __init__(self, user):
-        self.email = user["email"]
-        self.name = user["name"]
+        try:
+            self.email = user["email"]
+            self.name = user["name"]
+        except:
+            raise ValidationException("Missing Parameters!")
 
     def validate(self):
         """Validates user properties
@@ -34,10 +37,10 @@ class UserModel():
             ValidationException
                 If any of the properties are not valid
         """
-        if not self.email or not EMAIL_REGEX.match(self.email):
+        if not EMAIL_REGEX.match(self.email):
             raise ValidationException("Email not valid!")
 
-        if not self.name or not NAME_REGEX.match(self.name):
+        if not NAME_REGEX.match(self.name):
             raise ValidationException("Name not valid!")
 
         return True
