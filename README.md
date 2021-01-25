@@ -5,6 +5,10 @@
 docker
 docker-compose
 
+#### Install dependencies:
+
+    make build
+
 #### Run:
 
     make run
