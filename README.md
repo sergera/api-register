@@ -16,7 +16,7 @@ docker-compose
 #### Insert user
 
     curl -X POST -H "Content-Type: application/json" \
-    -d '{"name": "sergio joselli", "email": "sergio. joselli@gmail.com"}' \
+    -d '{"name": "sergio joselli", "email": "sergio.joselli@gmail.com"}' \
     http://localhost:8080/user
 
 #### Get users
