@@ -17,7 +17,7 @@ def insert():
     user.validate()
     unique_fields = [{"email"}]
     repository.insert_one_unique_fields(COLLECTION_NAME, user.to_dict(), unique_fields)
-    return {"message": "success!"}
+    return {"message": "success!"}, 201
 
 @app_user.route('/users', methods=['GET'])
 def get_all():
