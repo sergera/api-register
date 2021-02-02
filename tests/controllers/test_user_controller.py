@@ -59,7 +59,7 @@ class UserControllerTestCase(unittest.TestCase):
 
             statuscode = response.status_code
             self.assertEqual(response.content_type, "application/json")
-            self.assertEqual(statuscode, 200)
+            self.assertEqual(statuscode, 201)
             self.assertTrue(b"message" in response.data)
             translated_json = json.loads(response.data)
             self.assertEqual(translated_json, mocked_response)
